@@ -4,32 +4,27 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:FlutterTestPlugin/FlutterTestPlugin.dart';
 
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(new MyApp());
 
 class MyApp extends StatefulWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  _MyAppState createState() => new _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  String _dialogResult = 'Unknown';
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
+    String dialogResult;
     try {
-      platformVersion = await FlutterTestPlugin.platformVersion;
+      dialogResult = await PlatformOriginDialog.showDialog("確認", "保存しますか？");
     } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
+      dialogResult = 'Failed to show Dialog.';
     }
 
     // If the widget was removed from the tree while the asynchronous platform
@@ -38,20 +33,28 @@ class _MyAppState extends State<MyApp> {
     if (!mounted) return;
 
     setState(() {
-      _platformVersion = platformVersion;
+      _dialogResult = dialogResult;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
+    return new MaterialApp(
+      home: new Scaffold(
+        appBar: new AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
-        ),
+        body: 
+        Center(child: Column(children: <Widget>[
+          new Text('Dialog result: $_dialogResult\n'),
+          MaterialButton(
+            child: Text("Button"),
+            onPressed: () {
+            initPlatformState();
+          },)
+        ],
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        ))
       ),
     );
   }

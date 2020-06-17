@@ -2,12 +2,17 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
-class FlutterTestPlugin {
+class PlatformOriginDialog {
   static const MethodChannel _channel =
-      const MethodChannel('FlutterTestPlugin');
+      const MethodChannel('platform_origin_dialog');
 
-  static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
+  static Future<String> showDialog(String title, String message) async {
+    final String result = await _channel.invokeMethod(
+      'show_dialog',
+      <String, dynamic>{
+        'title': title,
+        'message': message,
+      });
+    return result;
   }
 }
